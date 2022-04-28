@@ -22,8 +22,5 @@ setuptools.setup(
         'pandas',
         'pycryptodome'
     ],
-    entry_points={
-    'console_scripts': ['pyhyypapi = pyhyypapi.__main__:main']
-    },
     python_requires = '>=3.6'
 )
