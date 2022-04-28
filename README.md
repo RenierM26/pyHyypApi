@@ -4,6 +4,28 @@
 # pyHyypApi
 API for ADT Secure Home and IDS Hyyp. There could be more variants but it's easy to add package names to the constants.py file.
 
+How to use:
+
+1) Install:
+
+```pip install pyHyypApi```
+
+2) Login:
+
+```
+import pyhyypapi
+import json
+client = pyhyypapi.hyypclient(email="",password="")
+client.login()
+```
+
+3) Get site/partition/user/zone info:
+
+```
+print(json.dumps(client.get_sync_info(),indent=2))
+
+```
+
 TO Do:
 
 - Main module for CLI usage.
