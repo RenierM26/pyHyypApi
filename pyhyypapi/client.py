@@ -128,9 +128,12 @@ class HyypClient:
         return _json_result
 
     def site_notifications(
-        self, site_id: int = None, timestamp: int = None
+        self, site_id: int = None, timestamp: int = None, json_key: str = None
     ) -> dict[Any, Any]:
         """Get site notifications from API."""
+
+        if not site_id:
+            raise HyypApiError("Please provide site id for this query")
 
         _params = STD_PARAMS.copy()
         _params["siteId"] = site_id
@@ -168,10 +171,18 @@ class HyypClient:
                 f"Error getting site notifications from api: {_json_result}"
             )
 
-        return _json_result
+        if json_key is None:
+            return _json_result
 
-    def get_camera_by_partition(self, partition_id: int = None) -> dict[Any, Any]:
-        """Get cameras/bypassed zones by partition from API."""
+        return _json_result[json_key]
+
+    def get_camera_by_partition(
+        self, partition_id: int = None, json_key: str = None
+    ) -> dict[Any, Any]:
+        """Get cameras, bypassed zones and zone ids by partition from API."""
+
+        if not partition_id:
+            raise HyypApiError("Please provide partition id.")
 
         _params = STD_PARAMS.copy()
         _params["partitionId"] = partition_id
@@ -208,10 +219,13 @@ class HyypClient:
                 f"Error getting partition cameras from api: {_json_result}"
             )
 
-        return _json_result
+        if json_key is None:
+            return _json_result
 
-    def get_sync_info(self) -> dict[Any, Any]:
-        """Get sync info from API."""
+        return _json_result[json_key]
+
+    def get_sync_info(self, json_key: str = None) -> dict[Any, Any]:
+        """Get user, site, partition and users info from API."""
 
         _params = STD_PARAMS
 
@@ -245,7 +259,10 @@ class HyypClient:
         if _json_result["status"] != "SUCCESS":
             raise HyypApiError(f"Error getting sync info from api: {_json_result}")
 
-        return _json_result
+        if json_key is None:
+            return _json_result
+
+        return _json_result[json_key]
 
     def get_state_info(self) -> dict[Any, Any]:
         """Get state info from API."""
