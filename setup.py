@@ -11,7 +11,7 @@ setuptools.setup(
     author_email='renierm26@users.github.com',
     description='IDS Hyyp/ADT Secure Home API',
     long_description="API for accessing IDS Hyyp. This is used by ADT Home Connect and possibly others. Please view readme on github",
-    url='https://github.com/RenierM26/pyadtsecurehome/',
+    url='https://github.com/RenierM26/pyHyypApi/',
     packages=setuptools.find_packages(),
     setup_requires=[
         'requests',
