@@ -13,7 +13,7 @@ _LOGGER = logging.getLogger(__name__)
 BASE_URL = "ids.trintel.co.za/Inhep-Impl-1.0-SNAPSHOT/"
 API_ENDPOINT_LOGIN = "/auth/login"
 API_ENDPOINT_CHECK_APP_VERSION = "/auth/checkAppVersion"
-API_ENDPOINT_SITE_NOTIFICATIONS = "/device/getSiteNotifications"
+API_ENDPOINT_GET_SITE_NOTIFICATIONS = "/device/getSiteNotifications"
 API_ENDPOINT_SYNC_INFO = "/device/getSyncInfo"
 API_ENDPOINT_STATE_INFO = "/device/getStateInfo"
 API_ENDPOINT_NOTIFICATION_SUBSCRIPTIONS = "/device/getNotificationSubscriptions"
@@ -22,6 +22,8 @@ API_ENDPOINT_SET_USER_PREFERANCE = "/user/setUserPreference"
 API_ENDPOINT_SECURITY_COMPANIES = "/security-companies/list"
 API_ENDPOINT_STORE_GCM_REGISTRATION_ID = "/user/storeGcmRegistrationId"
 API_ENDPOINT_ARM_SITE = "/device/armSite"
+API_ENDPOINT_SET_ZONE_BYPASS = "/device/bypass"
+API_ENDPOINT_GET_CAMERA_BY_PARTITION = "/device/getCameraByPartition"
 
 
 class PyAdtSecureHome:
@@ -124,15 +126,19 @@ class PyAdtSecureHome:
 
         return _json_result
 
-    def site_notifications(self) -> dict[Any, Any]:
+    def site_notifications(
+        self, site_id: int = None, timestamp: int = None
+    ) -> dict[Any, Any]:
         """Get site notifications from API."""
 
         _params = STD_PARAMS
         _params["token"] = self._token
+        _params["siteId"] = site_id
+        _params["timestamp"] = timestamp
 
         try:
             req = self._session.get(
-                "https://" + BASE_URL + API_ENDPOINT_SITE_NOTIFICATIONS,
+                "https://" + BASE_URL + API_ENDPOINT_GET_SITE_NOTIFICATIONS,
                 allow_redirects=False,
                 params=_params,
                 timeout=self._timeout,
@@ -160,6 +166,47 @@ class PyAdtSecureHome:
         if _json_result["status"] != "SUCCESS":
             raise PyAdtSecureHomeError(
                 f"Error getting site notifications from api: {_json_result}"
+            )
+
+        return _json_result
+
+    def get_camera_by_partition(self, partition_id: int = None) -> dict[Any, Any]:
+        """Get cameras/bypassed zones by partition from API."""
+
+        _params = STD_PARAMS
+        _params["token"] = self._token
+        _params["partitionId"] = partition_id
+
+        try:
+            req = self._session.get(
+                "https://" + BASE_URL + API_ENDPOINT_GET_CAMERA_BY_PARTITION,
+                allow_redirects=False,
+                params=_params,
+                timeout=self._timeout,
+            )
+
+            req.raise_for_status()
+
+        except requests.ConnectionError as err:
+            raise InvalidURL("A Invalid URL or Proxy error occured") from err
+
+        except requests.HTTPError as err:
+            raise HTTPError from err
+
+        try:
+            _json_result = req.json()
+
+        except ValueError as err:
+            raise PyAdtSecureHomeError(
+                "Impossible to decode response: "
+                + str(err)
+                + "\nResponse was: "
+                + str(req.text)
+            ) from err
+
+        if _json_result["status"] != "SUCCESS":
+            raise PyAdtSecureHomeError(
+                f"Error getting partition cameras from api: {_json_result}"
             )
 
         return _json_result
@@ -467,8 +514,9 @@ class PyAdtSecureHome:
         pin: int = None,
         partition_id: int = None,
         site_id: int = None,
+        stay_profile_id: int = None,
     ) -> dict[Any, Any]:
-        """Arm alarm via API."""
+        """Arm alarm or stay profile via API."""
 
         _params = STD_PARAMS
         _params["token"] = self._token
@@ -476,6 +524,7 @@ class PyAdtSecureHome:
         _params["pin"] = pin
         _params["partitionId"] = partition_id
         _params["siteId"] = site_id
+        _params["stayProfileId"] = stay_profile_id
 
         try:
             req = self._session.get(
@@ -506,6 +555,54 @@ class PyAdtSecureHome:
 
         if _json_result["status"] != "SUCCESS":
             raise PyAdtSecureHomeError(f"Arm site failed: {_json_result}")
+
+        return _json_result
+
+    def set_zone_bypass(
+        self,
+        partition_id: int = None,
+        zones: int = None,
+        stay_profile_id: int = 0,
+        pin: int = None,
+    ) -> dict[Any, Any]:
+        """Set/toggle zone bypass."""
+
+        _params = STD_PARAMS
+        _params["token"] = self._token
+        _params["partitionId"] = partition_id
+        _params["zones"] = zones
+        _params["stayProfileId"] = stay_profile_id
+        _params["pin"] = pin
+
+        try:
+            req = self._session.get(
+                "https://" + BASE_URL + API_ENDPOINT_SECURITY_COMPANIES,
+                allow_redirects=False,
+                params=_params,
+                timeout=self._timeout,
+            )
+
+            req.raise_for_status()
+
+        except requests.ConnectionError as err:
+            raise InvalidURL("A Invalid URL or Proxy error occured") from err
+
+        except requests.HTTPError as err:
+            raise HTTPError from err
+
+        try:
+            _json_result = req.json()
+
+        except ValueError as err:
+            raise PyAdtSecureHomeError(
+                "Impossible to decode response: "
+                + str(err)
+                + "\nResponse was: "
+                + str(req.text)
+            ) from err
+
+        if _json_result["status"] != "SUCCESS":
+            raise PyAdtSecureHomeError(f"Failed to set zone bypass: {_json_result}")
 
         return _json_result
 
