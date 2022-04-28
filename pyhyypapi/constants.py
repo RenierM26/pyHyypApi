@@ -1,4 +1,4 @@
-"""ADT Secure Home API constants."""
+"""Hyyp API constants."""
 from enum import Enum
 
 DEFAULT_TIMEOUT = 25

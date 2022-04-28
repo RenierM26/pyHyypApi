@@ -1,4 +1,4 @@
-"""ADT Secure Home API."""
+"""Hyyp Client API."""
 from __future__ import annotations
 
 import logging
@@ -7,7 +7,7 @@ from typing import Any
 import requests
 
 from .constants import DEFAULT_TIMEOUT, REQUEST_HEADER, STD_PARAMS, HyypPkg
-from .exceptions import HTTPError, InvalidURL, PyAdtSecureHomeError
+from .exceptions import HTTPError, InvalidURL, HyypApiError
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ API_ENDPOINT_GET_CAMERA_BY_PARTITION = "/device/getCameraByPartition"
 API_ENDPOINT_UPDATE_SUB_USER = "/user/updateSubUser"
 
 
-class PyAdtSecureHome:
+class HyypClient:
     """Initialize api client object."""
 
     def __init__(
@@ -75,7 +75,7 @@ class PyAdtSecureHome:
             _json_result = req.json()
 
         except ValueError as err:
-            raise PyAdtSecureHomeError(
+            raise HyypApiError(
                 "Impossible to decode response: "
                 + str(err)
                 + "\nResponse was: "
@@ -83,7 +83,7 @@ class PyAdtSecureHome:
             ) from err
 
         if _json_result["status"] != "SUCCESS":
-            raise PyAdtSecureHomeError(f"Login error: {_json_result}")
+            raise HyypApiError(f"Login error: {_json_result}")
 
         STD_PARAMS["token"] = _json_result["token"]
 
@@ -115,7 +115,7 @@ class PyAdtSecureHome:
             _json_result = req.json()
 
         except ValueError as err:
-            raise PyAdtSecureHomeError(
+            raise HyypApiError(
                 "Impossible to decode response: "
                 + str(err)
                 + "\nResponse was: "
@@ -123,9 +123,7 @@ class PyAdtSecureHome:
             ) from err
 
         if _json_result["status"] != "SUCCESS":
-            raise PyAdtSecureHomeError(
-                f"Error checking app version from api: {_json_result}"
-            )
+            raise HyypApiError(f"Error checking app version from api: {_json_result}")
 
         return _json_result
 
@@ -158,7 +156,7 @@ class PyAdtSecureHome:
             _json_result = req.json()
 
         except ValueError as err:
-            raise PyAdtSecureHomeError(
+            raise HyypApiError(
                 "Impossible to decode response: "
                 + str(err)
                 + "\nResponse was: "
@@ -166,7 +164,7 @@ class PyAdtSecureHome:
             ) from err
 
         if _json_result["status"] != "SUCCESS":
-            raise PyAdtSecureHomeError(
+            raise HyypApiError(
                 f"Error getting site notifications from api: {_json_result}"
             )
 
@@ -198,7 +196,7 @@ class PyAdtSecureHome:
             _json_result = req.json()
 
         except ValueError as err:
-            raise PyAdtSecureHomeError(
+            raise HyypApiError(
                 "Impossible to decode response: "
                 + str(err)
                 + "\nResponse was: "
@@ -206,7 +204,7 @@ class PyAdtSecureHome:
             ) from err
 
         if _json_result["status"] != "SUCCESS":
-            raise PyAdtSecureHomeError(
+            raise HyypApiError(
                 f"Error getting partition cameras from api: {_json_result}"
             )
 
@@ -237,7 +235,7 @@ class PyAdtSecureHome:
             _json_result = req.json()
 
         except ValueError as err:
-            raise PyAdtSecureHomeError(
+            raise HyypApiError(
                 "Impossible to decode response: "
                 + str(err)
                 + "\nResponse was: "
@@ -245,9 +243,7 @@ class PyAdtSecureHome:
             ) from err
 
         if _json_result["status"] != "SUCCESS":
-            raise PyAdtSecureHomeError(
-                f"Error getting sync info from api: {_json_result}"
-            )
+            raise HyypApiError(f"Error getting sync info from api: {_json_result}")
 
         return _json_result
 
@@ -276,7 +272,7 @@ class PyAdtSecureHome:
             _json_result = req.json()
 
         except ValueError as err:
-            raise PyAdtSecureHomeError(
+            raise HyypApiError(
                 "Impossible to decode response: "
                 + str(err)
                 + "\nResponse was: "
@@ -284,9 +280,7 @@ class PyAdtSecureHome:
             ) from err
 
         if _json_result["status"] != "SUCCESS":
-            raise PyAdtSecureHomeError(
-                f"Error getting state info from api: {_json_result}"
-            )
+            raise HyypApiError(f"Error getting state info from api: {_json_result}")
 
         return _json_result
 
@@ -315,7 +309,7 @@ class PyAdtSecureHome:
             _json_result = req.json()
 
         except ValueError as err:
-            raise PyAdtSecureHomeError(
+            raise HyypApiError(
                 "Impossible to decode response: "
                 + str(err)
                 + "\nResponse was: "
@@ -323,7 +317,7 @@ class PyAdtSecureHome:
             ) from err
 
         if _json_result["status"] != "SUCCESS":
-            raise PyAdtSecureHomeError(
+            raise HyypApiError(
                 f"Error getting notification subscriptions: {_json_result}"
             )
 
@@ -335,10 +329,10 @@ class PyAdtSecureHome:
         """Get user preferences from API."""
 
         if not user_id:
-            raise PyAdtSecureHomeError("A valid user id is required.")
+            raise HyypApiError("A valid user id is required.")
 
         if not site_id:
-            raise PyAdtSecureHomeError("A valid site id is required.")
+            raise HyypApiError("A valid site id is required.")
 
         _params = STD_PARAMS.copy()
         _params["userId"] = user_id
@@ -364,7 +358,7 @@ class PyAdtSecureHome:
             _json_result = req.json()
 
         except ValueError as err:
-            raise PyAdtSecureHomeError(
+            raise HyypApiError(
                 "Impossible to decode response: "
                 + str(err)
                 + "\nResponse was: "
@@ -372,9 +366,7 @@ class PyAdtSecureHome:
             ) from err
 
         if _json_result["status"] != "SUCCESS":
-            raise PyAdtSecureHomeError(
-                f"Error getting user preferences: {_json_result}"
-            )
+            raise HyypApiError(f"Error getting user preferences: {_json_result}")
 
         return _json_result
 
@@ -403,7 +395,7 @@ class PyAdtSecureHome:
             _json_result = req.json()
 
         except ValueError as err:
-            raise PyAdtSecureHomeError(
+            raise HyypApiError(
                 "Impossible to decode response: "
                 + str(err)
                 + "\nResponse was: "
@@ -411,9 +403,7 @@ class PyAdtSecureHome:
             ) from err
 
         if _json_result["status"] != "SUCCESS":
-            raise PyAdtSecureHomeError(
-                f"Failed to get security companies: {_json_result}"
-            )
+            raise HyypApiError(f"Failed to get security companies: {_json_result}")
 
         return _json_result
 
@@ -445,7 +435,7 @@ class PyAdtSecureHome:
             _json_result = req.json()
 
         except ValueError as err:
-            raise PyAdtSecureHomeError(
+            raise HyypApiError(
                 "Impossible to decode response: "
                 + str(err)
                 + "\nResponse was: "
@@ -453,7 +443,7 @@ class PyAdtSecureHome:
             ) from err
 
         if _json_result["status"] != "SUCCESS":
-            raise PyAdtSecureHomeError(f"Storing gcm id failed with: {_json_result}")
+            raise HyypApiError(f"Storing gcm id failed with: {_json_result}")
 
         return _json_result
 
@@ -467,9 +457,7 @@ class PyAdtSecureHome:
         """Set user code preferences."""
 
         if store_for not in ["Arm", "Bypass"]:
-            raise PyAdtSecureHomeError(
-                "Invalid selection, choose between Arm or Bypass"
-            )
+            raise HyypApiError("Invalid selection, choose between Arm or Bypass")
 
         _params = STD_PARAMS.copy()
         _params["siteId"] = site_id
@@ -500,7 +488,7 @@ class PyAdtSecureHome:
             _json_result = req.json()
 
         except ValueError as err:
-            raise PyAdtSecureHomeError(
+            raise HyypApiError(
                 "Impossible to decode response: "
                 + str(err)
                 + "\nResponse was: "
@@ -508,9 +496,7 @@ class PyAdtSecureHome:
             ) from err
 
         if _json_result["status"] != "SUCCESS":
-            raise PyAdtSecureHomeError(
-                f"Set user preferance failed with: {_json_result}"
-            )
+            raise HyypApiError(f"Set user preferance failed with: {_json_result}")
 
         return _json_result
 
@@ -555,7 +541,7 @@ class PyAdtSecureHome:
             _json_result = req.json()
 
         except ValueError as err:
-            raise PyAdtSecureHomeError(
+            raise HyypApiError(
                 "Impossible to decode response: "
                 + str(err)
                 + "\nResponse was: "
@@ -563,7 +549,7 @@ class PyAdtSecureHome:
             ) from err
 
         if _json_result["status"] != "SUCCESS":
-            raise PyAdtSecureHomeError(f"Updating sub user failed with: {_json_result}")
+            raise HyypApiError(f"Updating sub user failed with: {_json_result}")
 
         return _json_result
 
@@ -578,7 +564,7 @@ class PyAdtSecureHome:
         """Arm alarm or stay profile via API."""
 
         if not site_id:
-            raise PyAdtSecureHomeError("Site ID Required")
+            raise HyypApiError("Site ID Required")
 
         _params = STD_PARAMS.copy()
         _params["arm"] = arm
@@ -609,7 +595,7 @@ class PyAdtSecureHome:
             _json_result = req.json()
 
         except ValueError as err:
-            raise PyAdtSecureHomeError(
+            raise HyypApiError(
                 "Impossible to decode response: "
                 + str(err)
                 + "\nResponse was: "
@@ -617,7 +603,7 @@ class PyAdtSecureHome:
             ) from err
 
         if _json_result["status"] != "SUCCESS":
-            raise PyAdtSecureHomeError(f"Arm site failed: {_json_result}")
+            raise HyypApiError(f"Arm site failed: {_json_result}")
 
         return _json_result
 
@@ -631,7 +617,7 @@ class PyAdtSecureHome:
         """Set/toggle zone bypass."""
 
         if not zones and not stay_profile_id and not pin:
-            raise PyAdtSecureHomeError("Requires zone id, partition and pin.")
+            raise HyypApiError("Requires zone id, partition and pin.")
 
         _params = STD_PARAMS.copy()
         _params["partitionId"] = partition_id
@@ -661,7 +647,7 @@ class PyAdtSecureHome:
             _json_result = req.json()
 
         except ValueError as err:
-            raise PyAdtSecureHomeError(
+            raise HyypApiError(
                 "Impossible to decode response: "
                 + str(err)
                 + "\nResponse was: "
@@ -669,7 +655,7 @@ class PyAdtSecureHome:
             ) from err
 
         if _json_result["status"] != "SUCCESS":
-            raise PyAdtSecureHomeError(f"Failed to set zone bypass: {_json_result}")
+            raise HyypApiError(f"Failed to set zone bypass: {_json_result}")
 
         return _json_result
 
