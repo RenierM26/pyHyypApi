@@ -10,4 +10,4 @@ TO Do:
 - Refine function output. It's all json at the moment.
 - Refine failed messages. Catching broad excepts.
 - Capture panic api...for obvious reasons.
-- What zone caused arm/arm stay not to work. Should be in the arm response but can't seem to find it. (The app reports this)
+- What zone caused arm/arm stay not to work. - Looks like GCM/Firebase push messages. Might also be mqtt for huawei devices that I should be able to integrate with....
