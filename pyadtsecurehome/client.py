@@ -630,15 +630,20 @@ class PyAdtSecureHome:
     ) -> dict[Any, Any]:
         """Set/toggle zone bypass."""
 
+        if not zones and not stay_profile_id and not pin:
+            raise PyAdtSecureHomeError("Requires zone id, partition and pin.")
+
         _params = STD_PARAMS.copy()
         _params["partitionId"] = partition_id
         _params["zones"] = zones
         _params["stayProfileId"] = stay_profile_id
         _params["pin"] = pin
+        del _params["imei"]
+        _params["clientImei"] = STD_PARAMS["imei"]
 
         try:
             req = self._session.get(
-                "https://" + BASE_URL + API_ENDPOINT_SECURITY_COMPANIES,
+                "https://" + BASE_URL + API_ENDPOINT_SET_ZONE_BYPASS,
                 allow_redirects=False,
                 params=_params,
                 timeout=self._timeout,
