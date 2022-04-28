@@ -3,10 +3,11 @@ from __future__ import annotations
 
 import logging
 from typing import Any
-from .exceptions import PyAdtSecureHomeError, InvalidURL, HTTPError
-from .constants import DEFAULT_TIMEOUT, REQUEST_HEADER, STD_PARAMS
 
 import requests
+
+from .constants import DEFAULT_TIMEOUT, REQUEST_HEADER, STD_PARAMS, HyypPkg
+from .exceptions import HTTPError, InvalidURL, PyAdtSecureHomeError
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,6 +25,7 @@ API_ENDPOINT_STORE_GCM_REGISTRATION_ID = "/user/storeGcmRegistrationId"
 API_ENDPOINT_ARM_SITE = "/device/armSite"
 API_ENDPOINT_SET_ZONE_BYPASS = "/device/bypass"
 API_ENDPOINT_GET_CAMERA_BY_PARTITION = "/device/getCameraByPartition"
+API_ENDPOINT_UPDATE_SUB_USER = "/user/updateSubUser"
 
 
 class PyAdtSecureHome:
@@ -33,6 +35,7 @@ class PyAdtSecureHome:
         self,
         email: str | None = None,
         password: str | None = None,
+        pkg: str = HyypPkg.ADT_SECURE_HOME.value,
         timeout: int = DEFAULT_TIMEOUT,
         token: str | None = None,
     ) -> None:
@@ -41,6 +44,7 @@ class PyAdtSecureHome:
         self._password = password
         self._session = None
         self.close_session()
+        STD_PARAMS["pkg"] = pkg
         self._token = token
         self._timeout = timeout
 
@@ -505,6 +509,60 @@ class PyAdtSecureHome:
             raise PyAdtSecureHomeError(
                 f"Set user preferance failed with: {_json_result}"
             )
+
+        return _json_result
+
+    def set_subuser_preference(
+        self,
+        site_id: str = None,
+        user_id: str = None,
+        partition_id: str = None,
+        partition_pin: str = None,
+        stay_profile_id: int = None,
+    ) -> dict[Any, Any]:
+        """Set sub user preferences."""
+
+        _params = STD_PARAMS
+        _params["token"] = self._token
+        _params["siteId"] = site_id
+        _params["userId"] = user_id
+
+        _params["partitions"] = {}
+        _params["partitions"][0] = {}
+        _params["partitions"][0][".id"] = partition_id
+        _params["partitions"][0][".pin"] = partition_pin
+        _params["stayProfileIds"] = {}
+        _params["stayProfileIds"][0] = stay_profile_id
+
+        try:
+            req = self._session.post(
+                "https://" + BASE_URL + API_ENDPOINT_UPDATE_SUB_USER,
+                allow_redirects=False,
+                params=_params,
+                timeout=self._timeout,
+            )
+
+            req.raise_for_status()
+
+        except requests.ConnectionError as err:
+            raise InvalidURL("A Invalid URL or Proxy error occured") from err
+
+        except requests.HTTPError as err:
+            raise HTTPError from err
+
+        try:
+            _json_result = req.json()
+
+        except ValueError as err:
+            raise PyAdtSecureHomeError(
+                "Impossible to decode response: "
+                + str(err)
+                + "\nResponse was: "
+                + str(req.text)
+            ) from err
+
+        if _json_result["status"] != "SUCCESS":
+            raise PyAdtSecureHomeError(f"Updating sub user failed with: {_json_result}")
 
         return _json_result
 
