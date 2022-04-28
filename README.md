@@ -1,8 +1,10 @@
 # pyadtsecurehome
-API for ADT Secure Home. (Basically a skinned version of IDS Hyyp)
+API for ADT Secure Home and IDS Hyyp. There could be more variants but it's easy to add package names to the constants.py file.
 
-Still a work in progress and i need to figure out what the following is:
+TO Do:
 
-
-GCM_ID ?
-IMEI ? This might be a constant between security companies or some or other unique id on the unit. It's defenitly not a imei id as we know it...too long.
+- Main module for CLI usage.
+- Refine function output. It's all json at the moment.
+- Refine failed messages. Catching broad excepts.
+- Capture panic api...for obvious reasons.
+- What zone caused arm/arm stay not to work. Should be in the arm response but can't seem to find it. (The app reports this)
