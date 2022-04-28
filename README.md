@@ -46,5 +46,4 @@ TO Do:
 - Refine function output. It's all json at the moment.
 - Refine failed messages. The api returns "SUCCESS" with json output when successfull. Returns Failed when Hyyp servers can't process your request. (missing parm etc)
 - Capture panic api...for obvious reasons.
-- Capture disarm api.
 - What zone caused arm/arm stay not to work. - Looks like GCM/Firebase push messages. Might also be mqtt for huawei devices that I should be able to integrate with....
