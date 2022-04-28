@@ -45,13 +45,13 @@ class PyAdtSecureHome:
         self._session = None
         self.close_session()
         STD_PARAMS["pkg"] = pkg
-        self._token = token
+        STD_PARAMS["token"] = token
         self._timeout = timeout
 
     def login(self) -> dict[Any, Any]:
         """Login to ADT Secure Home API."""
 
-        _params = STD_PARAMS
+        _params = STD_PARAMS.copy()
         _params["email"] = self._email
         _params["password"] = self._password
 
@@ -85,15 +85,14 @@ class PyAdtSecureHome:
         if _json_result["status"] != "SUCCESS":
             raise PyAdtSecureHomeError(f"Login error: {_json_result}")
 
-        self._token = _json_result["token"]
+        STD_PARAMS["token"] = _json_result["token"]
 
         return _json_result
 
     def check_app_version(self) -> dict[Any, Any]:
         """Check App version via API."""
 
-        _params = STD_PARAMS
-        _params["token"] = self._token
+        _params = STD_PARAMS.copy()
         _params["clientImei"] = STD_PARAMS["imei"]
 
         try:
@@ -135,8 +134,7 @@ class PyAdtSecureHome:
     ) -> dict[Any, Any]:
         """Get site notifications from API."""
 
-        _params = STD_PARAMS
-        _params["token"] = self._token
+        _params = STD_PARAMS.copy()
         _params["siteId"] = site_id
         _params["timestamp"] = timestamp
 
@@ -177,8 +175,7 @@ class PyAdtSecureHome:
     def get_camera_by_partition(self, partition_id: int = None) -> dict[Any, Any]:
         """Get cameras/bypassed zones by partition from API."""
 
-        _params = STD_PARAMS
-        _params["token"] = self._token
+        _params = STD_PARAMS.copy()
         _params["partitionId"] = partition_id
 
         try:
@@ -219,7 +216,6 @@ class PyAdtSecureHome:
         """Get sync info from API."""
 
         _params = STD_PARAMS
-        _params["token"] = self._token
 
         try:
             req = self._session.get(
@@ -259,7 +255,6 @@ class PyAdtSecureHome:
         """Get state info from API."""
 
         _params = STD_PARAMS
-        _params["token"] = self._token
 
         try:
             req = self._session.get(
@@ -299,7 +294,6 @@ class PyAdtSecureHome:
         """Get notification subscriptions from API."""
 
         _params = STD_PARAMS
-        _params["token"] = self._token
 
         try:
             req = self._session.get(
@@ -335,11 +329,20 @@ class PyAdtSecureHome:
 
         return _json_result
 
-    def get_user_preferences(self) -> dict[Any, Any]:
+    def get_user_preferences(
+        self, user_id: int = None, site_id: int = None
+    ) -> dict[Any, Any]:
         """Get user preferences from API."""
 
-        _params = STD_PARAMS
-        _params["token"] = self._token
+        if not user_id:
+            raise PyAdtSecureHomeError("A valid user id is required.")
+
+        if not site_id:
+            raise PyAdtSecureHomeError("A valid site id is required.")
+
+        _params = STD_PARAMS.copy()
+        _params["userId"] = user_id
+        _params["siteId"] = site_id
 
         try:
             req = self._session.get(
@@ -379,7 +382,6 @@ class PyAdtSecureHome:
         """Get security companies from API."""
 
         _params = STD_PARAMS
-        _params["token"] = self._token
 
         try:
             req = self._session.get(
@@ -418,9 +420,10 @@ class PyAdtSecureHome:
     def store_gcm_registrationid(self, gcm_id: str = None) -> dict[Any, Any]:
         """Store gcmid."""
 
-        _params = STD_PARAMS
-        _params["token"] = self._token
+        _params = STD_PARAMS.copy()
         _params["gcmId"] = gcm_id
+        del _params["imei"]
+        _params["clientImei"] = STD_PARAMS["imei"]
 
         try:
             req = self._session.post(
@@ -468,8 +471,7 @@ class PyAdtSecureHome:
                 "Invalid selection, choose between Arm or Bypass"
             )
 
-        _params = STD_PARAMS
-        _params["token"] = self._token
+        _params = STD_PARAMS.copy()
         _params["siteId"] = site_id
 
         _params["name"] = (
@@ -522,8 +524,7 @@ class PyAdtSecureHome:
     ) -> dict[Any, Any]:
         """Set sub user preferences."""
 
-        _params = STD_PARAMS
-        _params["token"] = self._token
+        _params = STD_PARAMS.copy()
         _params["siteId"] = site_id
         _params["userId"] = user_id
 
@@ -576,13 +577,17 @@ class PyAdtSecureHome:
     ) -> dict[Any, Any]:
         """Arm alarm or stay profile via API."""
 
-        _params = STD_PARAMS
-        _params["token"] = self._token
+        if not site_id:
+            raise PyAdtSecureHomeError("Site ID Required")
+
+        _params = STD_PARAMS.copy()
         _params["arm"] = arm
         _params["pin"] = pin
         _params["partitionId"] = partition_id
         _params["siteId"] = site_id
         _params["stayProfileId"] = stay_profile_id
+        del _params["imei"]
+        _params["clientImei"] = STD_PARAMS["imei"]
 
         try:
             req = self._session.get(
@@ -625,8 +630,7 @@ class PyAdtSecureHome:
     ) -> dict[Any, Any]:
         """Set/toggle zone bypass."""
 
-        _params = STD_PARAMS
-        _params["token"] = self._token
+        _params = STD_PARAMS.copy()
         _params["partitionId"] = partition_id
         _params["zones"] = zones
         _params["stayProfileId"] = stay_profile_id

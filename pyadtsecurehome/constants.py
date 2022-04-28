@@ -1,6 +1,5 @@
 """ADT Secure Home API constants."""
 from enum import Enum
-from random import randint
 
 DEFAULT_TIMEOUT = 25
 MAX_RETRIES = 3
@@ -8,11 +7,7 @@ REQUEST_HEADER = {
     "User-Agent": "okhttp/3.12.1",
 }  # Standard android header.
 STD_PARAMS = {
-    "imei": "11413"
-    + "142114"
-    + "11413"
-    + "142114"
-    + str(randint(0000, 9999)),  # Looks like a random indentifier.
+    "imei": "152419714130158",  # Alphabet soup starts at 0
     "appVersionCode": "401",
     "_appVersionCode": "401",
     "deviceOS": "12.0",
