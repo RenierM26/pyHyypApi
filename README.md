@@ -6,11 +6,12 @@ API for ADT Secure Home and IDS Hyyp. There could be more variants but it's easy
 
 How to use:
 
-1) Install:
+  1. Install:
 
 ```pip install pyHyypApi```
 
-2) Login:
+  2.1. Login (ADT Secure Home):
+
 
 ```
 import pyhyypapi
@@ -19,7 +20,20 @@ client = pyhyypapi.hyypclient(email="",password="")
 client.login()
 ```
 
-3) Get site/partition/user/zone info:
+**OR**
+
+  2.2. Login (IDT Hyyp):
+
+```
+import pyhyypapi
+import json
+client = pyhyypapi.hyypclient(email="",password="",pkg=pyhyypapi.HyypPkg.IDS_HYYP_GENERIC.value)
+client.login()
+
+```
+
+
+3. Get site/partition/user/zone info:
 
 ```
 print(json.dumps(client.get_sync_info(),indent=2))
