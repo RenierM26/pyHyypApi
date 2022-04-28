@@ -26,6 +26,7 @@ API_ENDPOINT_ARM_SITE = "/device/armSite"
 API_ENDPOINT_SET_ZONE_BYPASS = "/device/bypass"
 API_ENDPOINT_GET_CAMERA_BY_PARTITION = "/device/getCameraByPartition"
 API_ENDPOINT_UPDATE_SUB_USER = "/user/updateSubUser"
+API_ENDPOINT_SET_NOTIFICATION_SUBSCRIPTIONS = "/user/setNotificationSubscriptionsNew"
 
 
 class HyypClient:
@@ -175,6 +176,59 @@ class HyypClient:
             return _json_result
 
         return _json_result[json_key]
+
+    def set_notification_subscriptions(
+        self,
+        trouble_notifications: bool = True,
+        emergency_notifications: bool = True,
+        user_notifications: bool = True,
+        information_notifications: bool = True,
+        test_report_notifications: bool = False,
+    ) -> dict[Any, Any]:
+        """Enable or disable app notifications."""
+
+        _params = STD_PARAMS.copy()
+        del _params["imei"]
+        _params["mobileImei"] = STD_PARAMS["imei"]
+        _params["troubleNotifications"] = trouble_notifications
+        _params["emergencyNotifications"] = emergency_notifications
+        _params["userNotifications"] = user_notifications
+        _params["informationNotifications"] = information_notifications
+        _params["testReportNotifications"] = test_report_notifications
+
+        try:
+            req = self._session.post(
+                "https://" + BASE_URL + API_ENDPOINT_SET_NOTIFICATION_SUBSCRIPTIONS,
+                allow_redirects=False,
+                params=_params,
+                timeout=self._timeout,
+            )
+
+            req.raise_for_status()
+
+        except requests.ConnectionError as err:
+            raise InvalidURL("A Invalid URL or Proxy error occured") from err
+
+        except requests.HTTPError as err:
+            raise HTTPError from err
+
+        try:
+            _json_result = req.json()
+
+        except ValueError as err:
+            raise HyypApiError(
+                "Impossible to decode response: "
+                + str(err)
+                + "\nResponse was: "
+                + str(req.text)
+            ) from err
+
+        if _json_result["status"] != "SUCCESS":
+            raise HyypApiError(
+                f"Error getting site notifications from api: {_json_result}"
+            )
+
+        return _json_result
 
     def get_camera_by_partition(
         self, partition_id: int = None, json_key: str = None
