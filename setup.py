@@ -20,7 +20,10 @@ setuptools.setup(
     install_requires=[
         'requests',
         'pandas',
-        'pycryptodome'
+        'oscrypto',
+        'protobuf',
+        'http-ece',
+        'appdirs'
     ],
     python_requires = '>=3.6'
 )

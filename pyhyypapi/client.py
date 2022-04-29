@@ -7,7 +7,7 @@ from typing import Any
 import requests
 
 from .constants import DEFAULT_TIMEOUT, REQUEST_HEADER, STD_PARAMS, HyypPkg
-from .exceptions import HTTPError, InvalidURL, HyypApiError
+from .exceptions import HTTPError, HyypApiError, InvalidURL
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -319,7 +319,7 @@ class HyypClient:
         return _json_result[json_key]
 
     def get_state_info(self) -> dict[Any, Any]:
-        """Get state info from API."""
+        """Get state info from API. Returns armed, bypassed partition ids"""
 
         _params = STD_PARAMS
 

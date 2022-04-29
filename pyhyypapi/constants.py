@@ -3,6 +3,7 @@ from enum import Enum
 
 DEFAULT_TIMEOUT = 25
 MAX_RETRIES = 3
+GCF_SENDER_ID = 87969245803
 REQUEST_HEADER = {
     "User-Agent": "okhttp/3.12.1",
 }  # Standard android header.
