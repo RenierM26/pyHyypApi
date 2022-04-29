@@ -363,7 +363,7 @@ def __login(credentials, persistent_ids):
     req.received_persistent_id.extend(persistent_ids)  # pylint: disable=maybe-no-member
     __send(google_socket, req)
     login_response = __recv(google_socket, first=True)
-    _LOGGER.info("Received login response: %s", login_response)
+    _LOGGER.debug("Received login response: %s", login_response)
     return google_socket
 
 
@@ -430,7 +430,7 @@ def __handle_data_message(data, credentials, callback, obj):
         version="aesgcm",
         auth_secret=secret,
     )
-    _LOGGER.info("Received data message %s: %s", data.persistent_id, decrypted)
+    _LOGGER.debug("Received data message %s: %s", data.persistent_id, decrypted)
     callback(obj, json.loads(decrypted.decode("utf-8")), data)
     return data.persistent_id
 

@@ -83,8 +83,8 @@ class HyypClient:
                 + str(req.text)
             ) from err
 
-        if _json_result["status"] != "SUCCESS":
-            raise HyypApiError(f"Login error: {_json_result}")
+        if _json_result["status"] != "SUCCESS" and _json_result["error"] is not None:
+            raise HyypApiError(f"Login error: {_json_result['error']}")
 
         STD_PARAMS["token"] = _json_result["token"]
 
@@ -123,8 +123,10 @@ class HyypClient:
                 + str(req.text)
             ) from err
 
-        if _json_result["status"] != "SUCCESS":
-            raise HyypApiError(f"Error checking app version from api: {_json_result}")
+        if _json_result["status"] != "SUCCESS" and _json_result["error"] is not None:
+            raise HyypApiError(
+                f"Error checking app version from api: {_json_result['error']}"
+            )
 
         return _json_result
 
@@ -167,9 +169,9 @@ class HyypClient:
                 + str(req.text)
             ) from err
 
-        if _json_result["status"] != "SUCCESS":
+        if _json_result["status"] != "SUCCESS" and _json_result["error"] is not None:
             raise HyypApiError(
-                f"Error getting site notifications from api: {_json_result}"
+                f"Error getting site notifications from api: {_json_result['error']}"
             )
 
         if json_key is None:
@@ -223,9 +225,9 @@ class HyypClient:
                 + str(req.text)
             ) from err
 
-        if _json_result["status"] != "SUCCESS":
+        if _json_result["status"] != "SUCCESS" and _json_result["error"] is not None:
             raise HyypApiError(
-                f"Error getting site notifications from api: {_json_result}"
+                f"Error getting site notifications from api: {_json_result['error']}"
             )
 
         return _json_result
@@ -268,9 +270,9 @@ class HyypClient:
                 + str(req.text)
             ) from err
 
-        if _json_result["status"] != "SUCCESS":
+        if _json_result["status"] != "SUCCESS" and _json_result["error"] is not None:
             raise HyypApiError(
-                f"Error getting partition cameras from api: {_json_result}"
+                f"Error getting partition cameras from api: {_json_result['error']}"
             )
 
         if json_key is None:
@@ -310,15 +312,17 @@ class HyypClient:
                 + str(req.text)
             ) from err
 
-        if _json_result["status"] != "SUCCESS":
-            raise HyypApiError(f"Error getting sync info from api: {_json_result}")
+        if _json_result["status"] != "SUCCESS" and _json_result["error"] is not None:
+            raise HyypApiError(
+                f"Error getting sync info from api: {_json_result['error']}"
+            )
 
         if json_key is None:
             return _json_result
 
         return _json_result[json_key]
 
-    def get_state_info(self) -> dict[Any, Any]:
+    def get_state_info(self, json_key: str = None) -> dict[Any, Any]:
         """Get state info from API. Returns armed, bypassed partition ids"""
 
         _params = STD_PARAMS
@@ -350,12 +354,17 @@ class HyypClient:
                 + str(req.text)
             ) from err
 
-        if _json_result["status"] != "SUCCESS":
-            raise HyypApiError(f"Error getting state info from api: {_json_result}")
+        if _json_result["status"] != "SUCCESS" and _json_result["error"] is not None:
+            raise HyypApiError(
+                f"Error getting state info from api: {_json_result['error']}"
+            )
 
-        return _json_result
+        if json_key is None:
+            return _json_result
 
-    def get_notification_subscriptions(self) -> dict[Any, Any]:
+        return _json_result[json_key]
+
+    def get_notification_subscriptions(self, json_key: str = None) -> dict[Any, Any]:
         """Get notification subscriptions from API."""
 
         _params = STD_PARAMS
@@ -387,15 +396,18 @@ class HyypClient:
                 + str(req.text)
             ) from err
 
-        if _json_result["status"] != "SUCCESS":
+        if _json_result["status"] != "SUCCESS" and _json_result["error"] is not None:
             raise HyypApiError(
-                f"Error getting notification subscriptions: {_json_result}"
+                f"Error getting notification subscriptions: {_json_result['error']}"
             )
 
-        return _json_result
+        if json_key is None:
+            return _json_result
+
+        return _json_result[json_key]
 
     def get_user_preferences(
-        self, user_id: int = None, site_id: int = None
+        self, user_id: int = None, site_id: int = None, json_key: str = None
     ) -> dict[Any, Any]:
         """Get user preferences from API."""
 
@@ -436,12 +448,17 @@ class HyypClient:
                 + str(req.text)
             ) from err
 
-        if _json_result["status"] != "SUCCESS":
-            raise HyypApiError(f"Error getting user preferences: {_json_result}")
+        if _json_result["status"] != "SUCCESS" and _json_result["error"] is not None:
+            raise HyypApiError(
+                f"Error getting user preferences: {_json_result['error']}"
+            )
 
-        return _json_result
+        if json_key is None:
+            return _json_result
 
-    def get_security_companies(self) -> dict[Any, Any]:
+        return _json_result[json_key]
+
+    def get_security_companies(self, json_key: str = None) -> dict[Any, Any]:
         """Get security companies from API."""
 
         _params = STD_PARAMS
@@ -473,10 +490,15 @@ class HyypClient:
                 + str(req.text)
             ) from err
 
-        if _json_result["status"] != "SUCCESS":
-            raise HyypApiError(f"Failed to get security companies: {_json_result}")
+        if _json_result["status"] != "SUCCESS" and _json_result["error"] is not None:
+            raise HyypApiError(
+                f"Failed to get security companies: {_json_result['error']}"
+            )
 
-        return _json_result
+        if json_key is None:
+            return _json_result
+
+        return _json_result[json_key]
 
     def store_gcm_registrationid(self, gcm_id: str = None) -> dict[Any, Any]:
         """Store gcmid."""
@@ -513,8 +535,8 @@ class HyypClient:
                 + str(req.text)
             ) from err
 
-        if _json_result["status"] != "SUCCESS":
-            raise HyypApiError(f"Storing gcm id failed with: {_json_result}")
+        if _json_result["status"] != "SUCCESS" and _json_result["error"] is not None:
+            raise HyypApiError(f"Storing gcm id failed with: {_json_result['error']}")
 
         return _json_result
 
@@ -566,8 +588,10 @@ class HyypClient:
                 + str(req.text)
             ) from err
 
-        if _json_result["status"] != "SUCCESS":
-            raise HyypApiError(f"Set user preferance failed with: {_json_result}")
+        if _json_result["status"] != "SUCCESS" and _json_result["error"] is not None:
+            raise HyypApiError(
+                f"Set user preferance failed with: {_json_result['error']}"
+            )
 
         return _json_result
 
@@ -619,8 +643,10 @@ class HyypClient:
                 + str(req.text)
             ) from err
 
-        if _json_result["status"] != "SUCCESS":
-            raise HyypApiError(f"Updating sub user failed with: {_json_result}")
+        if _json_result["status"] != "SUCCESS" and _json_result["error"] is not None:
+            raise HyypApiError(
+                f"Updating sub user failed with: {_json_result['error']}"
+            )
 
         return _json_result
 
@@ -673,8 +699,8 @@ class HyypClient:
                 + str(req.text)
             ) from err
 
-        if _json_result["status"] != "SUCCESS":
-            raise HyypApiError(f"Arm site failed: {_json_result}")
+        if _json_result["status"] != "SUCCESS" and _json_result["error"] is not None:
+            raise HyypApiError(f"Arm site failed: {_json_result['error']}")
 
         return _json_result
 
@@ -725,8 +751,8 @@ class HyypClient:
                 + str(req.text)
             ) from err
 
-        if _json_result["status"] != "SUCCESS":
-            raise HyypApiError(f"Failed to set zone bypass: {_json_result}")
+        if _json_result["status"] != "SUCCESS" and _json_result["error"] is not None:
+            raise HyypApiError(f"Failed to set zone bypass: {_json_result['error']}")
 
         return _json_result
 
