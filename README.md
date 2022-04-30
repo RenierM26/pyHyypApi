@@ -42,8 +42,6 @@ print(json.dumps(client.get_sync_info(),indent=2))
 
 TO Do:
 
-- CLI usage.
-- Refine function output. It's all json at the moment.
-- Refine failed messages. The api returns "SUCCESS" with json output when successfull. Returns Failed when Hyyp servers can't process your request. (missing parm etc)
+- CLI usage. (GCF client is there, just needs some more automation.)
 - Capture panic api...for obvious reasons.
-- What zone caused arm/arm stay not to work. - Looks like GCM/Firebase push messages. Might also be mqtt for huawei devices that I should be able to integrate with....
+- What zone caused arm/arm stay not to work. - Looks like GCM/Firebase push messages. Added GCM client...just run main program and register GCF code in function called register gcf. It works.
