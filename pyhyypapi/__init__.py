@@ -1,5 +1,6 @@
 """init hyyp api exceptions."""
 from .client import HyypClient
+from .alarm_info import HyypAlarmInfos
 from .constants import GCF_SENDER_ID, HyypPkg
 from .exceptions import HTTPError, HyypApiError, InvalidURL
 from .push_receiver import run_example
@@ -12,4 +13,5 @@ __all__ = [
     "HyypPkg",
     "GCF_SENDER_ID",
     "run_example",
+    "HyypAlarmInfos",
 ]
