@@ -8,6 +8,7 @@ import requests
 
 from .constants import DEFAULT_TIMEOUT, REQUEST_HEADER, STD_PARAMS, HyypPkg
 from .exceptions import HTTPError, HyypApiError, InvalidURL
+from .alarm_info import HyypAlarmInfos
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -129,6 +130,11 @@ class HyypClient:
             )
 
         return _json_result
+
+    def load_alarm_infos(self) -> dict[Any, Any]:
+        """Get alarm infos formatted for hass infos."""
+
+        return HyypAlarmInfos(self).status()
 
     def site_notifications(
         self, site_id: int = None, timestamp: int = None, json_key: str = None

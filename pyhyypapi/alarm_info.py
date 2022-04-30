@@ -1,10 +1,10 @@
 """Alarm info for hass integration"""
 from __future__ import annotations
 
-import datetime
 from typing import TYPE_CHECKING, Any
 
-from .client import HyypClient
+if TYPE_CHECKING:
+    from .client import HyypClient
 
 
 class HyypAlarmInfos:
@@ -12,10 +12,15 @@ class HyypAlarmInfos:
 
     def __init__(self, client: HyypClient) -> None:
         self._client = client
+        self._sync_info: dict = {}
+        self._state_info: dict = {}
+
+    def _fetch_data(self) -> None:
+        """Fetch data via client api."""
         self._sync_info = self._client.get_sync_info()
         self._state_info = self._client.get_state_info()
 
-    def format_data(self) -> dict[Any, Any]:
+    def _format_data(self) -> dict[Any, Any]:
         """Format data for Hass."""
 
         # The API returns data from site level, need to invert.
@@ -83,4 +88,7 @@ class HyypAlarmInfos:
     def status(self) -> dict[Any, Any]:
         """Returns the status of Hyyp connected alarms."""
 
-        return {}
+        self._fetch_data()
+        formatted_data: dict[Any, Any] = self._format_data()
+
+        return formatted_data
