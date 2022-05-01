@@ -719,8 +719,8 @@ class HyypClient:
     ) -> dict[Any, Any]:
         """Set/toggle zone bypass."""
 
-        if not zones and not stay_profile_id and not pin:
-            raise HyypApiError("Requires zone id, partition and pin.")
+        if not zones:
+            raise HyypApiError("Requires zone id")
 
         _params = STD_PARAMS.copy()
         _params["partitionId"] = partition_id
