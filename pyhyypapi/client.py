@@ -181,9 +181,9 @@ class HyypClient:
             )
 
         if json_key is None:
-            return _json_result
+            return _json_result["listSiteNotifications"][site_id]
 
-        return _json_result[json_key]
+        return _json_result["listSiteNotifications"][site_id][json_key]
 
     def set_notification_subscriptions(
         self,
