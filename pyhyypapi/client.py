@@ -6,9 +6,9 @@ from typing import Any
 
 import requests
 
+from .alarm_info import HyypAlarmInfos
 from .constants import DEFAULT_TIMEOUT, REQUEST_HEADER, STD_PARAMS, HyypPkg
 from .exceptions import HTTPError, HyypApiError, InvalidURL
-from .alarm_info import HyypAlarmInfos
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,6 +24,7 @@ API_ENDPOINT_SET_USER_PREFERANCE = "/user/setUserPreference"
 API_ENDPOINT_SECURITY_COMPANIES = "/security-companies/list"
 API_ENDPOINT_STORE_GCM_REGISTRATION_ID = "/user/storeGcmRegistrationId"
 API_ENDPOINT_ARM_SITE = "/device/armSite"
+API_ENDPOINT_TRIGGER_ALARM = "/device/triggerAlarm"
 API_ENDPOINT_SET_ZONE_BYPASS = "/device/bypass"
 API_ENDPOINT_GET_CAMERA_BY_PARTITION = "/device/getCameraByPartition"
 API_ENDPOINT_UPDATE_SUB_USER = "/user/updateSubUser"
@@ -329,7 +330,7 @@ class HyypClient:
         return _json_result[json_key]
 
     def get_state_info(self, json_key: str = None) -> dict[Any, Any]:
-        """Get state info from API. Returns armed, bypassed partition ids"""
+        """Get state info from API. Returns armed, bypassed partition ids."""
 
         _params = STD_PARAMS
 
@@ -707,6 +708,59 @@ class HyypClient:
 
         if _json_result["status"] != "SUCCESS" and _json_result["error"] is not None:
             raise HyypApiError(f"Arm site failed: {_json_result['error']}")
+
+        return _json_result
+
+    # Untested.
+    def trigger_alarm(
+        self,
+        pin: int = None,
+        partition_id: int = None,
+        site_id: int = None,
+        trigger_id: int = None,
+    ) -> dict[Any, Any]:
+        """Trigger via API."""
+
+        if not site_id:
+            raise HyypApiError("Site ID Required")
+
+        _params = STD_PARAMS.copy()
+        _params["pin"] = pin
+        _params["partitionId"] = partition_id
+        _params["siteId"] = site_id
+        _params["triggerId"] = trigger_id
+        del _params["imei"]
+        _params["clientImei"] = STD_PARAMS["imei"]
+
+        try:
+            req = self._session.post(
+                "https://" + BASE_URL + API_ENDPOINT_TRIGGER_ALARM,
+                allow_redirects=False,
+                params=_params,
+                timeout=self._timeout,
+            )
+
+            req.raise_for_status()
+
+        except requests.ConnectionError as err:
+            raise InvalidURL("A Invalid URL or Proxy error occured") from err
+
+        except requests.HTTPError as err:
+            raise HTTPError from err
+
+        try:
+            _json_result = req.json()
+
+        except ValueError as err:
+            raise HyypApiError(
+                "Impossible to decode response: "
+                + str(err)
+                + "\nResponse was: "
+                + str(req.text)
+            ) from err
+
+        if _json_result["status"] != "SUCCESS" and _json_result["error"] is not None:
+            raise HyypApiError(f"Trigger alarm failed: {_json_result['error']}")
 
         return _json_result
 

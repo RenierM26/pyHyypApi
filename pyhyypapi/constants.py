@@ -1,5 +1,5 @@
 """Hyyp API constants."""
-from enum import Enum, unique
+from enum import Enum
 
 DEFAULT_TIMEOUT = 25
 MAX_RETRIES = 3
@@ -42,95 +42,94 @@ class HyypPkg(Enum):
     IDS_HYYP_GENERIC = "com.hyyp247.home"
 
 
-@unique
-class EventNumber(Enum):
-    """EventNumber to name mapping."""
-
-    AC_CLOCK = 50
-    AC_FAIL = 13
-    AC_RESTORE = 24
-    ALARM_CANCEL = 3
-    ARMED_WITH_BYPASSED_ZONE = 7
-    AUTO_ARM_CANCEL = 43
-    AWAY_ARM = 0
-    BATTERY_LOW = 17
-    BATTERY_LOW_RESTORE = 28
-    BOX_TAMPER = 20
-    BOX_TAMPER_RESTORE = 31
-    BUS_COMMS_FAIL = 22
-    BUS_COMMS_RESTORE = 33
-    BUS_DEVICE_BATTERY_LOW = 23
-    BUS_DEVICE_BATTERY_RESTORE = 34
-    BUS_DEVICE_TAMPER = 21
-    BUS_DEVICE_TAMPER_RESTORE = 32
-    COMMS_FAIL = 14
-    COMM_RESTORE = 25
-    CROSSED_ZONE_ALARM = 53
-    CROSS_ZONE_TRIGGER = 89
-    CRYSTAL_OSCILLATOR_CLOCK = 51
-    DEDICATED_PANIC = 35
-    DISARM = 2
-    DISARM_FROM_STAY = 54
-    DOWNLOAD_ACCESS = 37
-    DTMF_LOGIN = 66
-    DURESS = 38
-    E12V_FUSE_FAIL = 18
-    E12V_FUSE_RESTORE = 29
-    ENGINEER_RESET = 19
-    ENGINEER_RESET_RESTORE = 30
-    ENTRY_DELAY = 88
-    EXIT_DELAY = 85
-    FAILED_IDSWIFT_LOGIN = 67
-    FORCED_DOOR = 90
-    INSTALLER_CODE_CHANGED = 52
-    INSTALLER_MODE = 45
-    KEYPAD_FIRE = 40
-    KEYPAD_LOCKOUT = 42
-    KEYPAD_MEDICAL = 41
-    KEYPAD_PANIC = 39
-    MPS_AC_FAIL = 79
-    MPS_AC_RESTORE = 82
-    MPS_BATT_LOW = 80
-    MPS_BATT_RESTORE = 83
-    MPS_FUSE_FAIL = 81
-    MPS_FUSE_RESTORE = 84
-    PANEL_DEFAULTED = 48
-    PHONE_LINE_RESTORE = 26
-    PHONE_LINE_TAMPER = 15
-    POWER_UP = 47
-    REMOTE_ARMING_REQUEST = 92
-    REMOTE_PANIC = 93
-    RESERVED = 49
-    RF_DETECTOR_BATT_RESTORE = 72
-    RF_DETECTOR_LOW_BATT = 68
-    RF_DETECTOR_SUPERVISION_LOSS = 69
-    RF_DETECTOR_SUPERVISION_RESTORE = 73
-    RF_JAM = 70
-    RF_JAM_RESTORE = 74
-    RF_RSSI_LOW = 71
-    RF_RSSI_RESTORE = 75
-    SIREN_RESTORE = 27
-    SIREN_TAMPER = 16
-    STAY_ARM = 1
-    STAY_ZONE_REPORT = 77
-    SYSTEM_TROUBLE = 230
-    SYSTEM_TROUBLE_RESTORE = 231
-    TAG_ARMING_REQUEST = 91
-    TAMPER_ALARM = 94
-    TEMP_TRIGGER = 100
-    TEMP_TRIGGER_ALARM = 101
-    TEST_REPORT = 36
-    TIME_STAMP = 78
-    USER_BYPASSED_ZONES = 65
-    USER_CODES_DEFAULTED = 46
-    USER_CODE_CHANGED = 44
-    USER_MENU_ACCESSED = 76
-    USER_UNBYPASSED_ZONES = 87
-    VOICE_LOGIN_LOCKOUT = 86
-    ZONE_FORCED = 8
-    ZONE_RESTORE = 6
-    ZONE_SHUTDOWN = 11
-    ZONE_SHUTDOWN_RESTORE = 12
-    ZONE_TAMPER = 9
-    ZONE_TAMPER_RESTORE = 10
-    ZONE_VIOLATION_ALARM = 5
+# EventNumber to name mapping.
+EventNumber = {
+    "50": "AC clock",
+    "13": "AC fail",
+    "24": "AC Restore",
+    "3": "Alarm cancel",
+    "7": "Armed with bypassed zone",
+    "43": "Auto arm cancel",
+    "0": "Away arm",
+    "17": "Battery low",
+    "28": "Battery low restore",
+    "20": "Box tamper",
+    "31": "Box tamper restore",
+    "22": "Bus comms fail",
+    "33": "Bus comms restore",
+    "23": "Bus device battery low",
+    "34": "Bus device battery restore",
+    "21": "Bus device tamper",
+    "32": "Bus device tamper restore",
+    "14": "Comms fail",
+    "25": "Comm restore",
+    "53": "Crossed zone alarm",
+    "89": "Cross zone trigger",
+    "51": "Crystal oscillator clock",
+    "35": "Dedicated panic",
+    "2": "Disarm",
+    "54": "Disarm from stay",
+    "37": "Download access",
+    "66": "DTMF login",
+    "38": "Duress",
+    "18": "12V fuse fail",
+    "29": "12V fuse restore",
+    "19": "Engineer reset",
+    "30": "Engineer reset restore",
+    "88": "Entry delay",
+    "85": "Exit delay",
+    "67": "Failed IDSwift login",
+    "90": "Forced door",
+    "52": "Installer code changed",
+    "45": "Installer mode",
+    "40": "Keypad fire",
+    "42": "Keypad lockout",
+    "41": "Keypad medical",
+    "39": "Keypad panic",
+    "79": "MPS AC fail",
+    "82": "MPS AC restore",
+    "80": "MPS batt low",
+    "83": "MPS Batt restore",
+    "81": "MPS Fuse fail",
+    "84": "MPS Fuse restore",
+    "48": "Panel defaulted",
+    "26": "Phone line restore",
+    "15": "Phone line tamper",
+    "47": "Power up",
+    "92": "Remote arming request",
+    "93": "Remote panic",
+    "49": "Reserved",
+    "72": "RF Detector batt restore",
+    "68": "RF Detector low batt",
+    "69": "RF Detector supervision loss",
+    "73": "RF Detector supervision restore",
+    "70": "RF Jam",
+    "74": "RF Jam restore",
+    "71": "Rf RSSI low",
+    "75": "RF RSSI restore",
+    "27": "Siren restore",
+    "16": "Siren tamper",
+    "1": "Stay arm",
+    "77": "Stay zone report",
+    "230": "System trouble",
+    "231": "System trouble restore",
+    "91": "TAG arming request",
+    "94": "Tamper alarm",
+    "100": "User trigger",
+    "101": "User panic",
+    "36": "Test report",
+    "78": "Time stamp",
+    "65": "User bypassed zones",
+    "46": "User codes defaulted",
+    "44": "User code changed",
+    "76": "User menu accessed",
+    "87": "User unbypassed zones",
+    "86": "Voice login lockout",
+    "8": "Force armed",
+    "6": "Zone restore",
+    "11": "Zone shutdown",
+    "12": "Zone shutdown restore",
+    "9": "Zone tamper",
+    "10": "Zone tamper restore",
+    "5": "Zone violation alarm",
+}

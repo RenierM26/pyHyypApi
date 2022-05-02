@@ -1,7 +1,9 @@
-"""Alarm info for hass integration"""
+"""Alarm info for hass integration."""
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
+
+from .constants import EventNumber
 
 if TYPE_CHECKING:
     from .client import HyypClient
@@ -11,6 +13,7 @@ class HyypAlarmInfos:
     """Initialize Hyyp alarm objects."""
 
     def __init__(self, client: HyypClient) -> None:
+        """init."""
         self._client = client
         self._sync_info: dict = {}
         self._state_info: dict = {}
@@ -19,6 +22,24 @@ class HyypAlarmInfos:
         """Fetch data via client api."""
         self._sync_info = self._client.get_sync_info()
         self._state_info = self._client.get_state_info()
+
+    def _last_notice(self, site_id: str) -> dict[Any, Any]:
+        """Get last notification."""
+        _response = {"dateTime": None, "eventName": None}
+
+        _last_notification = self._client.site_notifications(
+            site_id=site_id, json_key=0
+        )
+
+        _last_event = _last_notification["eventNumber"]
+        _last_event_datetime = _last_notification["dateTime"]
+
+        _response = {
+            "dateTime": _last_event_datetime,
+            "eventName": EventNumber[str(_last_event)],
+        }
+
+        return _response
 
     def _format_data(self) -> dict[Any, Any]:
         """Format data for Hass."""
@@ -83,10 +104,15 @@ class HyypAlarmInfos:
                 else:
                     partition_ids[partition]["stayArmed"] = False
 
+            # Add last site notification.
+            partition_ids[partition]["lastNotification"] = self._last_notice(
+                site_id=str(list(partition_ids[partition]["site"])[0])
+            )
+
         return partition_ids
 
     def status(self) -> dict[Any, Any]:
-        """Returns the status of Hyyp connected alarms."""
+        """Return the status of Hyyp connected alarms."""
 
         self._fetch_data()
         formatted_data: dict[Any, Any] = self._format_data()
