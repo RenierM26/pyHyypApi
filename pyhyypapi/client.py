@@ -138,7 +138,7 @@ class HyypClient:
         return HyypAlarmInfos(self).status()
 
     def site_notifications(
-        self, site_id: int = None, timestamp: int = None, json_key: str = None
+        self, site_id: int = None, timestamp: int = None, json_key: int = None
     ) -> dict[Any, Any]:
         """Get site notifications from API."""
 
@@ -182,9 +182,9 @@ class HyypClient:
             )
 
         if json_key is None:
-            return _json_result["listSiteNotifications"][site_id]
+            return _json_result["listSiteNotifications"][str(site_id)]
 
-        return _json_result["listSiteNotifications"][site_id][json_key]
+        return _json_result["listSiteNotifications"][str(site_id)][json_key]
 
     def set_notification_subscriptions(
         self,
