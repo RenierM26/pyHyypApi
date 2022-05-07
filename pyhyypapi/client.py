@@ -45,13 +45,13 @@ class HyypClient:
         """Initialize the client object."""
         self._email = email
         self._password = password
-        self._session = None
-        self.close_session()
+        self._session = requests.session()
+        self._session.headers.update(REQUEST_HEADER)
         STD_PARAMS["pkg"] = pkg
         STD_PARAMS["token"] = token
         self._timeout = timeout
 
-    def login(self) -> dict[Any, Any]:
+    def login(self) -> Any:
         """Login to ADT Secure Home API."""
 
         _params = STD_PARAMS.copy()
@@ -75,7 +75,7 @@ class HyypClient:
             raise HTTPError from err
 
         try:
-            _json_result = req.json()
+            _json_result: dict[Any, Any] = req.json()
 
         except ValueError as err:
             raise HyypApiError(
@@ -92,7 +92,7 @@ class HyypClient:
 
         return _json_result
 
-    def check_app_version(self) -> dict[Any, Any]:
+    def check_app_version(self) -> Any:
         """Check App version via API."""
 
         _params = STD_PARAMS.copy()
@@ -115,7 +115,7 @@ class HyypClient:
             raise HTTPError from err
 
         try:
-            _json_result = req.json()
+            _json_result: dict[Any, Any] = req.json()
 
         except ValueError as err:
             raise HyypApiError(
@@ -138,14 +138,11 @@ class HyypClient:
         return HyypAlarmInfos(self).status()
 
     def site_notifications(
-        self, site_id: int = None, timestamp: int = None, json_key: int = None
-    ) -> dict[Any, Any]:
+        self, site_id: int, timestamp: int | None = None, json_key: int | None = None
+    ) -> Any:
         """Get site notifications from API."""
 
-        if not site_id:
-            raise HyypApiError("Please provide site id for this query")
-
-        _params = STD_PARAMS.copy()
+        _params: dict[str, Any] = STD_PARAMS.copy()
         _params["siteId"] = site_id
         _params["timestamp"] = timestamp
 
@@ -166,7 +163,7 @@ class HyypClient:
             raise HTTPError from err
 
         try:
-            _json_result = req.json()
+            _json_result: dict[Any, Any] = req.json()
 
         except ValueError as err:
             raise HyypApiError(
@@ -193,10 +190,10 @@ class HyypClient:
         user_notifications: bool = True,
         information_notifications: bool = True,
         test_report_notifications: bool = False,
-    ) -> dict[Any, Any]:
+    ) -> Any:
         """Enable or disable app notifications."""
 
-        _params = STD_PARAMS.copy()
+        _params: dict[str, Any] = STD_PARAMS.copy()
         del _params["imei"]
         _params["mobileImei"] = STD_PARAMS["imei"]
         _params["troubleNotifications"] = trouble_notifications
@@ -222,7 +219,7 @@ class HyypClient:
             raise HTTPError from err
 
         try:
-            _json_result = req.json()
+            _json_result: dict[Any, Any] = req.json()
 
         except ValueError as err:
             raise HyypApiError(
@@ -240,14 +237,11 @@ class HyypClient:
         return _json_result
 
     def get_camera_by_partition(
-        self, partition_id: int = None, json_key: str = None
-    ) -> dict[Any, Any]:
+        self, partition_id: int, json_key: str | None = None
+    ) -> Any:
         """Get cameras, bypassed zones and zone ids by partition from API."""
 
-        if not partition_id:
-            raise HyypApiError("Please provide partition id.")
-
-        _params = STD_PARAMS.copy()
+        _params: dict[str, Any] = STD_PARAMS.copy()
         _params["partitionId"] = partition_id
 
         try:
@@ -267,7 +261,7 @@ class HyypClient:
             raise HTTPError from err
 
         try:
-            _json_result = req.json()
+            _json_result: dict[Any, Any] = req.json()
 
         except ValueError as err:
             raise HyypApiError(
@@ -287,7 +281,7 @@ class HyypClient:
 
         return _json_result[json_key]
 
-    def get_sync_info(self, json_key: str = None) -> dict[Any, Any]:
+    def get_sync_info(self, json_key: str | None = None) -> Any:
         """Get user, site, partition and users info from API."""
 
         _params = STD_PARAMS
@@ -309,7 +303,7 @@ class HyypClient:
             raise HTTPError from err
 
         try:
-            _json_result = req.json()
+            _json_result: dict[Any, Any] = req.json()
 
         except ValueError as err:
             raise HyypApiError(
@@ -329,7 +323,7 @@ class HyypClient:
 
         return _json_result[json_key]
 
-    def get_state_info(self, json_key: str = None) -> dict[Any, Any]:
+    def get_state_info(self, json_key: str | None = None) -> Any:
         """Get state info from API. Returns armed, bypassed partition ids."""
 
         _params = STD_PARAMS
@@ -351,7 +345,7 @@ class HyypClient:
             raise HTTPError from err
 
         try:
-            _json_result = req.json()
+            _json_result: dict[Any, Any] = req.json()
 
         except ValueError as err:
             raise HyypApiError(
@@ -371,7 +365,7 @@ class HyypClient:
 
         return _json_result[json_key]
 
-    def get_notification_subscriptions(self, json_key: str = None) -> dict[Any, Any]:
+    def get_notification_subscriptions(self, json_key: str | None = None) -> Any:
         """Get notification subscriptions from API."""
 
         _params = STD_PARAMS
@@ -393,7 +387,7 @@ class HyypClient:
             raise HTTPError from err
 
         try:
-            _json_result = req.json()
+            _json_result: dict[Any, Any] = req.json()
 
         except ValueError as err:
             raise HyypApiError(
@@ -414,17 +408,11 @@ class HyypClient:
         return _json_result[json_key]
 
     def get_user_preferences(
-        self, user_id: int = None, site_id: int = None, json_key: str = None
-    ) -> dict[Any, Any]:
+        self, user_id: int, site_id: int | None = None, json_key: str | None = None
+    ) -> Any:
         """Get user preferences from API."""
 
-        if not user_id:
-            raise HyypApiError("A valid user id is required.")
-
-        if not site_id:
-            raise HyypApiError("A valid site id is required.")
-
-        _params = STD_PARAMS.copy()
+        _params: dict[str, Any] = STD_PARAMS.copy()
         _params["userId"] = user_id
         _params["siteId"] = site_id
 
@@ -445,7 +433,7 @@ class HyypClient:
             raise HTTPError from err
 
         try:
-            _json_result = req.json()
+            _json_result: dict[Any, Any] = req.json()
 
         except ValueError as err:
             raise HyypApiError(
@@ -465,7 +453,7 @@ class HyypClient:
 
         return _json_result[json_key]
 
-    def get_security_companies(self, json_key: str = None) -> dict[Any, Any]:
+    def get_security_companies(self, json_key: str | None = None) -> Any:
         """Get security companies from API."""
 
         _params = STD_PARAMS
@@ -487,7 +475,7 @@ class HyypClient:
             raise HTTPError from err
 
         try:
-            _json_result = req.json()
+            _json_result: dict[Any, Any] = req.json()
 
         except ValueError as err:
             raise HyypApiError(
@@ -507,7 +495,7 @@ class HyypClient:
 
         return _json_result[json_key]
 
-    def store_gcm_registrationid(self, gcm_id: str = None) -> dict[Any, Any]:
+    def store_gcm_registrationid(self, gcm_id: str | None = None) -> Any:
         """Store gcmid."""
 
         _params = STD_PARAMS.copy()
@@ -549,17 +537,17 @@ class HyypClient:
 
     def set_user_preference(
         self,
-        site_id: str = None,
-        partition_id: str = None,
-        new_code: int = None,
-        store_for: str = None,
-    ) -> dict[Any, Any]:
+        store_for: str,
+        new_code: int,
+        site_id: str,
+        partition_id: str,
+    ) -> Any:
         """Set user code preferences."""
 
         if store_for not in ["Arm", "Bypass"]:
             raise HyypApiError("Invalid selection, choose between Arm or Bypass")
 
-        _params = STD_PARAMS.copy()
+        _params: dict[Any, Any] = STD_PARAMS.copy()
         _params["siteId"] = site_id
 
         _params["name"] = (
@@ -585,7 +573,7 @@ class HyypClient:
             raise HTTPError from err
 
         try:
-            _json_result = req.json()
+            _json_result: dict[Any, Any] = req.json()
 
         except ValueError as err:
             raise HyypApiError(
@@ -604,15 +592,15 @@ class HyypClient:
 
     def set_subuser_preference(
         self,
-        site_id: str = None,
-        user_id: str = None,
-        partition_id: str = None,
-        partition_pin: str = None,
-        stay_profile_id: int = None,
-    ) -> dict[Any, Any]:
+        user_id: str,
+        site_id: str | None = None,
+        partition_id: str | None = None,
+        partition_pin: str | None = None,
+        stay_profile_id: int | None = None,
+    ) -> Any:
         """Set sub user preferences."""
 
-        _params = STD_PARAMS.copy()
+        _params: dict[Any, Any] = STD_PARAMS.copy()
         _params["siteId"] = site_id
         _params["userId"] = user_id
 
@@ -640,7 +628,7 @@ class HyypClient:
             raise HTTPError from err
 
         try:
-            _json_result = req.json()
+            _json_result: dict[Any, Any] = req.json()
 
         except ValueError as err:
             raise HyypApiError(
@@ -659,18 +647,15 @@ class HyypClient:
 
     def arm_site(
         self,
+        site_id: int,
         arm: bool = True,
-        pin: int = None,
-        partition_id: int = None,
-        site_id: int = None,
-        stay_profile_id: int = None,
-    ) -> dict[Any, Any]:
+        pin: int | None = None,
+        partition_id: int | None = None,
+        stay_profile_id: int | None = None,
+    ) -> Any:
         """Arm alarm or stay profile via API."""
 
-        if not site_id:
-            raise HyypApiError("Site ID Required")
-
-        _params = STD_PARAMS.copy()
+        _params: dict[Any, Any] = STD_PARAMS.copy()
         _params["arm"] = arm
         _params["pin"] = pin
         _params["partitionId"] = partition_id
@@ -696,7 +681,7 @@ class HyypClient:
             raise HTTPError from err
 
         try:
-            _json_result = req.json()
+            _json_result: dict[Any, Any] = req.json()
 
         except ValueError as err:
             raise HyypApiError(
@@ -714,17 +699,14 @@ class HyypClient:
     # Untested.
     def trigger_alarm(
         self,
-        pin: int = None,
-        partition_id: int = None,
-        site_id: int = None,
-        trigger_id: int = None,
-    ) -> dict[Any, Any]:
-        """Trigger via API."""
+        site_id: int,
+        pin: int | None = None,
+        partition_id: int | None = None,
+        trigger_id: int | None = None,
+    ) -> Any:
+        """Trigger Alarm via API."""
 
-        if not site_id:
-            raise HyypApiError("Site ID Required")
-
-        _params = STD_PARAMS.copy()
+        _params: dict[Any, Any] = STD_PARAMS.copy()
         _params["pin"] = pin
         _params["partitionId"] = partition_id
         _params["siteId"] = site_id
@@ -749,7 +731,7 @@ class HyypClient:
             raise HTTPError from err
 
         try:
-            _json_result = req.json()
+            _json_result: dict[Any, Any] = req.json()
 
         except ValueError as err:
             raise HyypApiError(
@@ -766,17 +748,14 @@ class HyypClient:
 
     def set_zone_bypass(
         self,
-        partition_id: int = None,
-        zones: int = None,
+        zones: int,
+        partition_id: int | None = None,
         stay_profile_id: int = 0,
-        pin: int = None,
-    ) -> dict[Any, Any]:
+        pin: int | None = None,
+    ) -> Any:
         """Set/toggle zone bypass."""
 
-        if not zones:
-            raise HyypApiError("Requires zone id")
-
-        _params = STD_PARAMS.copy()
+        _params: dict[str, Any] = STD_PARAMS.copy()
         _params["partitionId"] = partition_id
         _params["zones"] = zones
         _params["stayProfileId"] = stay_profile_id
@@ -801,7 +780,7 @@ class HyypClient:
             raise HTTPError from err
 
         try:
-            _json_result = req.json()
+            _json_result: dict[Any, Any] = req.json()
 
         except ValueError as err:
             raise HyypApiError(

@@ -15,6 +15,7 @@ STD_PARAMS = {
     "deviceName": "Python API",
     "pkg": "za.co.adt.securehome.android",
     "_appVersionName": "3.5.19",
+    "token": None,
 }  # Standard request parameters.
 
 # Rpc to name mapping. Used in push notifications.
