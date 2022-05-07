@@ -67,46 +67,46 @@ class HyypAlarmInfos:
             site_ids[site]["lastNoticeName"] = _last_notice["lastNoticeName"]
 
             # Add partition info.
-            site_ids[site]["paritions"] = {
+            site_ids[site]["partitions"] = {
                 partition_id: partition_ids[partition_id]
                 for partition_id in site_ids[site]["partitionIds"]
             }
 
             for partition in partition_ids:
                 # Add zone info to partition.
-                site_ids[site]["paritions"][partition]["zones"] = {
+                site_ids[site]["partitions"][partition]["zones"] = {
                     key: value
                     for (key, value) in zone_ids.items()
-                    if key in site_ids[site]["paritions"][partition]["zoneIds"]
+                    if key in site_ids[site]["partitions"][partition]["zoneIds"]
                 }
 
                 # Add zone bypass info to zone.
-                for zone in site_ids[site]["paritions"][partition]["zones"]:
-                    site_ids[site]["paritions"][partition]["zones"][zone][
+                for zone in site_ids[site]["partitions"][partition]["zones"]:
+                    site_ids[site]["partitions"][partition]["zones"][zone][
                         "bypassed"
                     ] = bool(zone in self._state_info["bypassedZoneIds"])
 
                 # Add stay profile info.
-                site_ids[site]["paritions"][partition]["stayProfiles"] = {
+                site_ids[site]["partitions"][partition]["stayProfiles"] = {
                     key: value
                     for (key, value) in stay_ids.items()
-                    if key in site_ids[site]["paritions"][partition]["stayProfileIds"]
+                    if key in site_ids[site]["partitions"][partition]["stayProfileIds"]
                 }
 
                 # Add partition armed status.
-                site_ids[site]["paritions"][partition]["armed"] = bool(
+                site_ids[site]["partitions"][partition]["armed"] = bool(
                     partition in self._state_info["armedPartitionIds"]
                 )
 
                 # Add partition stay_armed status.
-                for stay_profile in site_ids[site]["paritions"][partition][
+                for stay_profile in site_ids[site]["partitions"][partition][
                     "stayProfiles"
                 ]:
-                    site_ids[site]["paritions"][partition]["stayArmed"] = bool(
+                    site_ids[site]["partitions"][partition]["stayArmed"] = bool(
                         stay_profile in self._state_info["armedStayProfileIds"]
                     )
-                    site_ids[site]["paritions"][partition]["stayArmedProfileName"] = (
-                        site_ids[site]["paritions"][partition]["stayProfiles"][
+                    site_ids[site]["partitions"][partition]["stayArmedProfileName"] = (
+                        site_ids[site]["partitions"][partition]["stayProfiles"][
                             stay_profile
                         ]["name"]
                         if stay_profile in self._state_info["armedStayProfileIds"]
