@@ -178,7 +178,7 @@ class HyypClient:
                 f"Error getting site notifications from api: {_json_result['error']}"
             )
 
-        if json_key is None:
+        if not json_key or _json_result["listSiteNotifications"][str(site_id)] is None:
             return _json_result["listSiteNotifications"][str(site_id)]
 
         return _json_result["listSiteNotifications"][str(site_id)][json_key]

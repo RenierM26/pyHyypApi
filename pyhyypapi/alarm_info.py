@@ -31,15 +31,17 @@ class HyypAlarmInfos:
             site_id=site_id, json_key=0
         )
 
-        _last_event = _last_notification["eventNumber"]
-        _last_event_datetime = str(
-            datetime.fromtimestamp(_last_notification["timestamp"] / 1000)
-        )  # Epoch in ms
+        if _last_notification:
 
-        _response = {
-            "lastNoticeTime": _last_event_datetime,
-            "lastNoticeName": EventNumber[str(_last_event)],
-        }
+            _last_event = _last_notification["eventNumber"]
+            _last_event_datetime = str(
+                datetime.fromtimestamp(_last_notification["timestamp"] / 1000)
+            )  # Epoch in ms
+
+            _response = {
+                "lastNoticeTime": _last_event_datetime,
+                "lastNoticeName": EventNumber[str(_last_event)],
+            }
 
         return _response
 
