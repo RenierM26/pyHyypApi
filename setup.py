@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='pyhyypapi',
-    version="0.0.0.7",
+    version="0.0.0.8",
     license='Apache Software License 2.0',
     author='Renier Moorcroft',
     author_email='renierm26@users.github.com',
